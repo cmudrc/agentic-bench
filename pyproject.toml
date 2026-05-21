@@ -1,0 +1,48 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agentic-bench"
+version = "0.1.0"
+description = "A small, opinionated benchmark for local agentic LLMs in engineering domains. Pluggable adapters; numerical, tool-routing, argument-extraction, planning, and multimodal tasks; a single aggregate loss."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+authors = [{ name = "Mayank Dixit" }, { name = "CMU Design Research Collective" }]
+keywords = ["llm", "agent", "benchmark", "evaluation", "ollama", "gemma", "aerospace"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: Apache Software License",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+]
+dependencies = [
+  "pyyaml>=6.0",
+  "ollama>=0.4",
+]
+
+[project.optional-dependencies]
+multimodal = ["pillow>=10.0"]
+dev = [
+  "pytest>=8",
+  "ruff>=0.5",
+]
+
+[project.scripts]
+agentic-bench = "agentic_bench.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/cmudrc/agentic-bench"
+Issues = "https://github.com/cmudrc/agentic-bench/issues"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["agentic_bench*"]
+
+[tool.setuptools.package-data]
+agentic_bench = ["tasks/*.yaml"]
