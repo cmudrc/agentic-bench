@@ -1,10 +1,12 @@
 """HybridAdapter: route text/tool tasks to one model, multimodal to another.
 
 Motivation: on our 2026-05-21 aircraft-design suite Qwen 2.5 7B beat
-Gemma 4 E4B by 55 % on aggregate loss but lost 0 -> 100 % on a
-multimodal-only sub-suite (Gemma scored 3/3, Qwen scored 1/3 by
-defaulting to "acceptable"). Neither model dominates everywhere, so
-this adapter sends each task to the model that does its kind best.
+Gemma 4 E4B by 55 % on aggregate loss on text/tool tasks. On the
+multimodal sub-suite (post 2026-05-28 image-bug fix) both models
+score 2/3 — but Qwen has no vision and just defaults to "acceptable"
+on every image, so the tie is coincidence; only Gemma's verdict is
+grounded in the actual picture. Neither model dominates everywhere,
+so this adapter sends each task to the model that does its kind best.
 
 API matches LLMAdapter exactly: `chat()` goes to the planner model,
 `chat_with_image()` goes to the seeker model. Callers (the agentic-

@@ -7,4 +7,4 @@ intentionally small: the CLI in `agentic_bench.cli`, the runner in
 `agentic_bench.scoring`.
 """
 
-__version__ = "0.1.0"
+__version__ = "0.2.1"
