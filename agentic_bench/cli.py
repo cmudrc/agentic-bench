@@ -17,15 +17,20 @@ from agentic_bench.adapters import REGISTRY
 from agentic_bench.runner import run_suite, save_report
 
 
-def _build_adapter(backend: str, model: str, host: str | None):
+def _build_adapter(backend: str, model: str, host: str | None, seeker_model: str | None):
     if backend not in REGISTRY:
         raise SystemExit(f"unknown backend: {backend}. known: {sorted(REGISTRY)}")
     cls = REGISTRY[backend]
-    return cls(model=model, host=host) if host else cls(model=model)
+    kwargs: dict[str, str] = {"model": model}
+    if host:
+        kwargs["host"] = host
+    if backend == "hybrid" and seeker_model:
+        kwargs["seeker_model"] = seeker_model
+    return cls(**kwargs)
 
 
 def cmd_run(args: argparse.Namespace) -> int:
-    adapter = _build_adapter(args.backend, args.model, args.host)
+    adapter = _build_adapter(args.backend, args.model, args.host, args.seeker_model)
     print(f"[agentic-bench] adapter = {adapter.name()}", file=sys.stderr)
     print(f"[agentic-bench] suite   = {args.suite}", file=sys.stderr)
 
@@ -68,6 +73,8 @@ def main(argv: list[str] | None = None) -> int:
     run_p.add_argument("--backend", default="ollama", help="adapter name (default: ollama)")
     run_p.add_argument("--model", required=True, help="model tag (e.g. gemma4:e4b)")
     run_p.add_argument("--host", default=None, help="adapter host (e.g. http://localhost:11434)")
+    run_p.add_argument("--seeker-model", default="gemma4:e4b",
+                       help="Multimodal model for the hybrid adapter (default: gemma4:e4b). Ignored by non-hybrid backends.")
     run_p.add_argument("--report", default=None, help="write JSON report to this path")
     run_p.set_defaults(fn=cmd_run)
 
