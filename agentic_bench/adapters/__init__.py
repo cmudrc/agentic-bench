@@ -8,15 +8,18 @@ registering it in `agentic_bench.adapters.REGISTRY`.
 from agentic_bench.adapters.base import LLMAdapter, ToolCall, ChatResult
 from agentic_bench.adapters.ollama_adapter import OllamaAdapter
 from agentic_bench.adapters.hybrid_adapter import HybridAdapter
+from agentic_bench.adapters.react_adapter import OllamaReactAdapter
 
 REGISTRY: dict[str, type[LLMAdapter]] = {
     "ollama": OllamaAdapter,
+    "ollama-react": OllamaReactAdapter,
     "hybrid": HybridAdapter,
 }
 
 __all__ = [
     "LLMAdapter",
     "OllamaAdapter",
+    "OllamaReactAdapter",
     "HybridAdapter",
     "ToolCall",
     "ChatResult",

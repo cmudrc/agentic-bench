@@ -1,9 +1,17 @@
 """agentic-bench CLI.
 
 Usage:
-    agentic-bench run --suite path/to/suite.yaml --model gemma4:e4b
-    agentic-bench run --suite path/to/suite.yaml --model qwen2.5:7b \\
-                     --backend ollama --report reports/qwen.json
+    # Recommended (all-Gemma production default):
+    agentic-bench run --suite path/to/suite.yaml --backend ollama \\
+                     --model gemma4:e4b --report reports/gemma4_e4b.json
+
+    # Historical comparison:
+    agentic-bench run --suite path/to/suite.yaml --backend ollama \\
+                     --model qwen2.5:7b --report reports/qwen.json
+
+    # Server-tier Gemma 3 via structured-output ReAct:
+    agentic-bench run --suite path/to/suite.yaml --backend ollama-react \\
+                     --model gemma3:27b --report reports/gemma3_27b_react.json
 """
 
 from __future__ import annotations

@@ -5,10 +5,12 @@ domains. Pluggable adapters, deterministic scoring, a single aggregate
 loss in `[0, 1]`. Works out of the box with Ollama; ~50 LOC to add a new
 provider.
 
-> Status: alpha (v0.1.0). Released because we needed a way to compare
-> Gemma 4, Qwen 2.5, Gemma 3, and friends on an aerospace-flavoured
-> agent workload — and decided to make it reusable for anyone wiring
-> LLMs to engineering tools.
+> Status: alpha (v0.2.x). Originally built to compare Gemma 4,
+> Qwen 2.5, Gemma 3, and friends on an aerospace-flavoured agent
+> workload; the production pipeline in
+> [`cmudrc/agent-mcp`](https://github.com/cmudrc/agent-mcp) settled on
+> **Gemma 4 E4B** (native tool calling) as the default planner.
+> Qwen results are preserved in `reports/` for historical comparison.
 
 ---
 
@@ -50,8 +52,9 @@ You also need an LLM backend. The reference adapter is
 ```bash
 brew install ollama
 brew services start ollama
-ollama pull gemma4:e4b      # the default model in the default suite
-ollama pull qwen2.5:7b      # comparison baseline
+ollama pull gemma4:e4b      # default model in the default suite
+ollama pull qwen2.5:7b      # historical comparison (optional)
+ollama pull gemma3:27b      # server-tier model (use --backend ollama-react)
 ```
 
 ## Quickstart
