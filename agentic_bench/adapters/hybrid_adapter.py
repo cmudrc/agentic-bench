@@ -27,8 +27,8 @@ class HybridAdapter:
 
     def __init__(
         self,
-        model: str,                          # planner/text model
-        seeker_model: str = "gemma4:e4b",    # multimodal model
+        model: str,  # planner/text model
+        seeker_model: str = "gemma4:e4b",  # multimodal model
         host: str | None = None,
         num_ctx: int = 8192,
     ):
@@ -54,4 +54,6 @@ class HybridAdapter:
         image_path: str,
         temperature: float = 0.0,
     ) -> ChatResult:
-        return self._seeker.chat_with_image(messages, image_path, temperature=temperature)
+        return self._seeker.chat_with_image(
+            messages, image_path, temperature=temperature
+        )

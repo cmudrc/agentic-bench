@@ -25,7 +25,9 @@ from agentic_bench.adapters import REGISTRY
 from agentic_bench.runner import run_suite, save_report
 
 
-def _build_adapter(backend: str, model: str, host: str | None, seeker_model: str | None):
+def _build_adapter(
+    backend: str, model: str, host: str | None, seeker_model: str | None
+):
     if backend not in REGISTRY:
         raise SystemExit(f"unknown backend: {backend}. known: {sorted(REGISTRY)}")
     cls = REGISTRY[backend]
@@ -58,8 +60,12 @@ def cmd_run(args: argparse.Namespace) -> int:
         print(f"    {cat:<11} {score:.3f}")
     print("\n  per-item:")
     for it in report["items"]:
-        marker = "[OK]" if it["score"] >= 0.95 else "[--]" if it["score"] >= 0.5 else "[XX]"
-        print(f"   {marker} {it['task_id']:<30} ({it['category']:<10}) score={it['score']:.3f}  note={it['note']}")
+        marker = (
+            "[OK]" if it["score"] >= 0.95 else "[--]" if it["score"] >= 0.5 else "[XX]"
+        )
+        print(
+            f"   {marker} {it['task_id']:<30} ({it['category']:<10}) score={it['score']:.3f}  note={it['note']}"
+        )
     return 0
 
 
@@ -78,11 +84,18 @@ def main(argv: list[str] | None = None) -> int:
 
     run_p = sub.add_parser("run", help="run a benchmark suite")
     run_p.add_argument("--suite", required=True, help="path to YAML suite")
-    run_p.add_argument("--backend", default="ollama", help="adapter name (default: ollama)")
+    run_p.add_argument(
+        "--backend", default="ollama", help="adapter name (default: ollama)"
+    )
     run_p.add_argument("--model", required=True, help="model tag (e.g. gemma4:e4b)")
-    run_p.add_argument("--host", default=None, help="adapter host (e.g. http://localhost:11434)")
-    run_p.add_argument("--seeker-model", default="gemma4:e4b",
-                       help="Multimodal model for the hybrid adapter (default: gemma4:e4b). Ignored by non-hybrid backends.")
+    run_p.add_argument(
+        "--host", default=None, help="adapter host (e.g. http://localhost:11434)"
+    )
+    run_p.add_argument(
+        "--seeker-model",
+        default="gemma4:e4b",
+        help="Multimodal model for the hybrid adapter (default: gemma4:e4b). Ignored by non-hybrid backends.",
+    )
     run_p.add_argument("--report", default=None, help="write JSON report to this path")
     run_p.set_defaults(fn=cmd_run)
 

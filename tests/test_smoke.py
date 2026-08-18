@@ -13,7 +13,12 @@ from agentic_bench import scoring
 from agentic_bench.adapters.base import ToolCall
 from agentic_bench.runner import load_suite
 
-SUITE = Path(__file__).resolve().parent.parent / "agentic_bench" / "tasks" / "aircraft_design.yaml"
+SUITE = (
+    Path(__file__).resolve().parent.parent
+    / "agentic_bench"
+    / "tasks"
+    / "aircraft_design.yaml"
+)
 
 
 def test_suite_loads():
@@ -30,7 +35,9 @@ def test_numerical_perfect():
 
 
 def test_numerical_within_tolerance():
-    s = scoring.score_numerical(expected=0.55, got_text="The answer is 0.60.", tolerance_pct=15)
+    s = scoring.score_numerical(
+        expected=0.55, got_text="The answer is 0.60.", tolerance_pct=15
+    )
     assert s.score == pytest.approx(1.0)
 
 
@@ -58,8 +65,15 @@ def test_routing_miss():
 
 
 def test_args_exact():
-    calls = [ToolCall(name="su2_run_aero", arguments={"mach": 0.78, "aoa_deg": 2.5, "preset": "workstation"})]
-    s = scoring.score_arg_extraction({"mach": 0.78, "aoa_deg": 2.5, "preset": "workstation"}, calls)
+    calls = [
+        ToolCall(
+            name="su2_run_aero",
+            arguments={"mach": 0.78, "aoa_deg": 2.5, "preset": "workstation"},
+        )
+    ]
+    s = scoring.score_arg_extraction(
+        {"mach": 0.78, "aoa_deg": 2.5, "preset": "workstation"}, calls
+    )
     assert s.score == pytest.approx(1.0)
 
 

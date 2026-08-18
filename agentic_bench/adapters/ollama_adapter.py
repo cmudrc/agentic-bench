@@ -7,7 +7,7 @@ from typing import Any
 
 import ollama
 
-from agentic_bench.adapters.base import ChatResult, LLMAdapter, ToolCall
+from agentic_bench.adapters.base import ChatResult, ToolCall
 
 
 class OllamaAdapter:
@@ -46,12 +46,13 @@ class OllamaAdapter:
         resp = self._client.chat(**kwargs)
         msg = resp["message"]
         tool_calls = []
-        for tc in (msg.get("tool_calls") or []):
+        for tc in msg.get("tool_calls") or []:
             fn = tc.get("function", tc) if isinstance(tc, dict) else tc.function
             name = fn["name"] if isinstance(fn, dict) else fn.name
             args = fn["arguments"] if isinstance(fn, dict) else fn.arguments
             if isinstance(args, str):
                 import json
+
                 try:
                     args = json.loads(args)
                 except json.JSONDecodeError:

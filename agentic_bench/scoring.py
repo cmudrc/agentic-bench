@@ -29,9 +29,7 @@ DEFAULT_WEIGHTS = {
 }
 
 
-_NUMBER_RE = re.compile(
-    r"[-+]?(?:\d+\.\d+|\d+(?:\.\d+)?|\.\d+)(?:[eE][-+]?\d+)?"
-)
+_NUMBER_RE = re.compile(r"[-+]?(?:\d+\.\d+|\d+(?:\.\d+)?|\.\d+)(?:[eE][-+]?\d+)?")
 
 
 @dataclass(frozen=True)
@@ -141,7 +139,9 @@ def score_arg_extraction(
             if err <= arg_tolerance_pct / 100.0:
                 sub_scores.append(1.0)
             else:
-                sub_scores.append(float(max(0.0, math.exp(-(err - arg_tolerance_pct / 100.0) * 5.0))))
+                sub_scores.append(
+                    float(max(0.0, math.exp(-(err - arg_tolerance_pct / 100.0) * 5.0)))
+                )
             breakdown[k] = (exp_v, got_f)
         else:
             sub_scores.append(1.0 if str(got_v) == str(exp_v) else 0.0)
@@ -173,13 +173,15 @@ def score_planning(
         for j in range(1, m + 1):
             cost = 0 if expected_sequence[i - 1] == got_sequence[j - 1] else 1
             dp[i][j] = min(
-                dp[i - 1][j] + 1,        # deletion
-                dp[i][j - 1] + 1,        # insertion
-                dp[i - 1][j - 1] + cost, # substitution
+                dp[i - 1][j] + 1,  # deletion
+                dp[i][j - 1] + 1,  # insertion
+                dp[i - 1][j - 1] + cost,  # substitution
             )
     dist = dp[n][m]
     score = 1.0 - dist / max(n, m)
-    return ScoreItem("", "planning", float(max(0.0, score)), expected_sequence, got_sequence)
+    return ScoreItem(
+        "", "planning", float(max(0.0, score)), expected_sequence, got_sequence
+    )
 
 
 def score_multimodal(expected_label: str, got_text: str) -> ScoreItem:
@@ -187,7 +189,9 @@ def score_multimodal(expected_label: str, got_text: str) -> ScoreItem:
     if not got_text:
         return ScoreItem("", "multimodal", 0.0, expected_label, "")
     hit = expected_label.lower() in got_text.lower()
-    return ScoreItem("", "multimodal", 1.0 if hit else 0.0, expected_label, got_text[:120])
+    return ScoreItem(
+        "", "multimodal", 1.0 if hit else 0.0, expected_label, got_text[:120]
+    )
 
 
 def aggregate(

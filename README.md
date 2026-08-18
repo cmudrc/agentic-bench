@@ -106,7 +106,10 @@ A suite is a single YAML file containing:
   renormalised over the categories that actually appear in the suite.
 
 See [`agentic_bench/tasks/aircraft_design.yaml`](agentic_bench/tasks/aircraft_design.yaml)
-for the reference suite (19 items, aerospace-flavoured).
+for the reference suite (19 items, aerospace-flavoured): 9 numerical,
+5 routing, 3 argument extraction, 2 planning. Three further multimodal items
+ship separately, because they need a vision-capable backend. Results reported
+elsewhere as a "22-item suite" are these 19 plus those 3.
 
 ## Scoring details
 
@@ -193,3 +196,9 @@ project as the originating context:
   howpublished = {\url{https://github.com/cmudrc/agentic-bench}},
 }
 ```
+
+## Maintainers
+
+Mayank Dixit ([@Kugel-Blitz-13](https://github.com/Kugel-Blitz-13)), Carnegie
+Mellon University — mayankd@cmu.edu
+Christopher McComb, Carnegie Mellon University — Design Research Collective

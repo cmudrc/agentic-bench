@@ -40,10 +40,14 @@ def _run_numerical(adapter: LLMAdapter, item: dict) -> scoring.ScoreItem:
         got_text=r.text,
         tolerance_pct=float(item.get("tolerance_pct", 10.0)),
     )
-    return scoring.ScoreItem(item["id"], "numerical", s.score, s.expected, r.text[:120], s.note)
+    return scoring.ScoreItem(
+        item["id"], "numerical", s.score, s.expected, r.text[:120], s.note
+    )
 
 
-def _run_routing(adapter: LLMAdapter, item: dict, tool_specs: list[dict]) -> scoring.ScoreItem:
+def _run_routing(
+    adapter: LLMAdapter, item: dict, tool_specs: list[dict]
+) -> scoring.ScoreItem:
     messages = [
         {
             "role": "system",
@@ -62,7 +66,9 @@ def _run_routing(adapter: LLMAdapter, item: dict, tool_specs: list[dict]) -> sco
     return scoring.ScoreItem(item["id"], "routing", s.score, s.expected, got, s.note)
 
 
-def _run_args(adapter: LLMAdapter, item: dict, tool_specs: list[dict]) -> scoring.ScoreItem:
+def _run_args(
+    adapter: LLMAdapter, item: dict, tool_specs: list[dict]
+) -> scoring.ScoreItem:
     messages = [
         {
             "role": "system",
@@ -83,18 +89,23 @@ def _run_args(adapter: LLMAdapter, item: dict, tool_specs: list[dict]) -> scorin
     return scoring.ScoreItem(item["id"], "args", s.score, s.expected, s.got, s.note)
 
 
-def _run_planning(adapter: LLMAdapter, item: dict, tool_specs: list[dict]) -> scoring.ScoreItem:
+def _run_planning(
+    adapter: LLMAdapter, item: dict, tool_specs: list[dict]
+) -> scoring.ScoreItem:
     messages = [
         {
             "role": "system",
             "content": (
                 "You are planning a multi-step aerospace analysis. "
-                "Respond with a JSON object {\"plan\": [\"tool1\", "
-                "\"tool2\", ...]} listing the tools you would call in "
+                'Respond with a JSON object {"plan": ["tool1", '
+                '"tool2", ...]} listing the tools you would call in '
                 "order. Use only tool names from the catalog. No prose."
             ),
         },
-        {"role": "user", "content": f"Tools: {[t['function']['name'] for t in tool_specs]}\nRequest: {item['prompt']}"},
+        {
+            "role": "user",
+            "content": f"Tools: {[t['function']['name'] for t in tool_specs]}\nRequest: {item['prompt']}",
+        },
     ]
     r = adapter.chat(messages, tools=None, temperature=0.0)
     got_seq: list[str] = []
@@ -118,10 +129,18 @@ def _run_planning(adapter: LLMAdapter, item: dict, tool_specs: list[dict]) -> sc
     return scoring.ScoreItem(item["id"], "planning", s.score, s.expected, got_seq)
 
 
-def _run_multimodal(adapter: LLMAdapter, item: dict, suite_dir: Path) -> scoring.ScoreItem:
+def _run_multimodal(
+    adapter: LLMAdapter, item: dict, suite_dir: Path
+) -> scoring.ScoreItem:
     img_path = (suite_dir / item["image"]).resolve()
     if not img_path.exists():
-        return scoring.ScoreItem(item["id"], "multimodal", 0.0, item["expected_label"], f"image missing: {img_path}")
+        return scoring.ScoreItem(
+            item["id"],
+            "multimodal",
+            0.0,
+            item["expected_label"],
+            f"image missing: {img_path}",
+        )
     messages = [
         {
             "role": "user",
@@ -130,7 +149,9 @@ def _run_multimodal(adapter: LLMAdapter, item: dict, suite_dir: Path) -> scoring
     ]
     r = adapter.chat_with_image(messages, str(img_path), temperature=0.0)
     s = scoring.score_multimodal(item["expected_label"], r.text)
-    return scoring.ScoreItem(item["id"], "multimodal", s.score, s.expected, r.text[:120], s.note)
+    return scoring.ScoreItem(
+        item["id"], "multimodal", s.score, s.expected, r.text[:120], s.note
+    )
 
 
 def run_suite(adapter: LLMAdapter, suite_path: str | Path) -> dict[str, Any]:
@@ -157,9 +178,17 @@ def run_suite(adapter: LLMAdapter, suite_path: str | Path) -> dict[str, Any]:
             elif kind == "multimodal":
                 results.append(_run_multimodal(adapter, it, suite_dir))
             else:
-                results.append(scoring.ScoreItem(it["id"], kind, 0.0, None, None, f"unknown kind: {kind}"))
+                results.append(
+                    scoring.ScoreItem(
+                        it["id"], kind, 0.0, None, None, f"unknown kind: {kind}"
+                    )
+                )
         except Exception as e:
-            results.append(scoring.ScoreItem(it["id"], kind, 0.0, None, None, f"error: {type(e).__name__}: {e}"))
+            results.append(
+                scoring.ScoreItem(
+                    it["id"], kind, 0.0, None, None, f"error: {type(e).__name__}: {e}"
+                )
+            )
     t_total = time.time() - t_total0
 
     agg = scoring.aggregate(results, weights=suite.get("weights"))
